@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>H54XX PANEL</title>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+<style>
+  /* Red + hexagon theme */
+  :root{
+    --bg:#0b0b0c;
+    --panel:#141214;
+    --accent:#ff3b3b;
+    --accent-2:#ff6b6b;
+    --muted:#bdb6b6;
+    --glass: rgba(255,255,255,0.03);
+    --glass-2: rgba(255,255,255,0.02);
+    --danger:#ff3b3b;
+  }
+  *{box-sizing:border-box;font-family:Inter,Segoe UI,Helvetica,Arial,sans-serif}
+  html,body{height:100%;margin:0;background:
+    /* svg hexagon tiling as a data URI */
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.02), transparent 20%),
+    linear-gradient(180deg,#070707 0%, #0d0b0c 100%);
+    color:#f3eaea;
+  }
+
+  /* subtle hexagon repeating background using CSS overlay + svg */
+  body::before{
+    content:"";
+    position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image: url("data:image/svg+xml;utf8,\
+      <svg xmlns='http://www.w3.org/2000/svg' width='120' height='104' viewBox='0 0 120 104'>\
+        <defs>\
+          <linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='%23ff3b3b' stop-opacity='0.06'/><stop offset='1' stop-color='%23ff6b6b' stop-opacity='0.02'/></linearGradient>\
+        </defs>\
+        <g fill='none' stroke='rgba(255,255,255,0.02)' stroke-width='0.6'>\
+          <path d='M30 0 L90 0 L120 52 L90 104 L30 104 L0 52 Z' transform='translate(0,0)'/>\
+        </g>\
+      </svg>");
+    opacity:0.38;
+    mix-blend-mode:overlay;
+    background-repeat:repeat;
+  }
+
+  .wrap{position:relative;z-index:1;max-width:1120px;margin:28px auto;padding:22px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
+  header{display:flex;align-items:center;gap:18px}
+  .logo{
+    width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,#3a0505,#7d0a0a);
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:22px;box-shadow:0 8px 30px rgba(255,59,59,0.06);
+    border:1px solid rgba(255,255,255,0.03);
+    cursor:pointer;
+  }
+  h1{margin:0;font-size:20px;letter-spacing:0.6px}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+  .grid{display:grid;grid-template-columns:420px 1fr;gap:18px;margin-top:18px}
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));padding:16px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+  .form-row{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+  label.block{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+  input[type=text],input[type=password],select{width:100%;padding:10px;border-radius:8px;background:var(--glass);border:1px solid rgba(255,255,255,0.02);color:inherit;font-size:13px}
+  .toggles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .toggle{
+    display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .toggle .tname{font-size:13px;color:#ffdede}
+  .switch{width:44px;height:24px;background:rgba(0,0,0,0.25);border-radius:20px;position:relative;cursor:pointer;border:1px solid rgba(255,255,255,0.03)}
+  .switch .knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:all .18s ease;box-shadow:0 4px 8px rgba(0,0,0,0.6)}
+  .switch.on{background:linear-gradient(90deg, rgba(255,59,59,0.18), rgba(255,107,107,0.06));border-color:rgba(255,59,59,0.14)}
+  .switch.on .knob{left:22px;background:linear-gradient(180deg,#fff3f3,#ffe6e6)}
+  .controls{display:flex;gap:10px;margin-top:8px}
+  .btn{padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#2a0b0b,#3b0f0f);border:1px solid rgba(255,255,255,0.03);color:var(--accent);cursor:pointer}
+  .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;color:#2b0b0b;font-weight:700;box-shadow:0 8px 30px rgba(255,59,59,0.08)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+  .small{font-size:13px;padding:8px 10px;border-radius:8px}
+  .right-panel{display:flex;flex-direction:column;height:100%}
+  .log{
+    flex:1;overflow:auto;padding:12px;border-radius:8px;background:linear-gradient(180deg,#080808,#0c0b0b);border:1px solid rgba(255,255,255,0.02);font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;font-size:13px;color:#ffb8b8;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)
+  }
+  .progress-wrap{margin-top:12px}
+  .pbar{height:14px;border-radius:8px;background:rgba(255,255,255,0.03);overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+  .pbar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%;transition:width .35s ease}
+  .status{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:6px}
+  footer{margin-top:12px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}
+  .server-select{display:flex;gap:10px}
+  .chip{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:12px;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+  .blink{color:var(--accent);animation:blink 1.1s linear infinite}
+  @keyframes blink{0%{opacity:1}50%{opacity:0.15}100%{opacity:1}}
+  .hidden{display:none}
+  .fake-badge{background:linear-gradient(90deg,#200606,#180404);padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);font-size:13px}
+  .hint{font-size:12px;color:var(--muted);margin-top:8px}
+  .danger{color:var(--danger)}
+  /* small screens */
+  @media (max-width:900px){
+    .grid{grid-template-columns:1fr; }
+    .logo{width:54px;height:54px}
+  }
+
+  /* Login overlay */
+  .overlay{
+    position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.75),rgba(2,2,2,0.9));display:flex;align-items:center;justify-content:center;z-index:9999;
+  }
+  .login-card{width:420px;background:linear-gradient(180deg,#0b0b0b,#161111);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 20px 60px rgba(0,0,0,0.7)}
+  .login-card h2{margin:0 0 10px 0;color:#ffdede}
+  .login-card p{margin:0 0 16px 0;color:var(--muted);font-size:13px}
+  .login-card .row{display:flex;gap:8px}
+  .login-card input{flex:1}
+  .warning{font-size:12px;color:var(--muted);margin-top:10px}
+  .access-row{display:flex;gap:10px;align-items:center;margin-top:14px}
+  .get-access{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap" aria-live="polite">
+  <header>
+    <div class="logo" id="logo">H54XX</div>
+    <div>
+      <h1>H54XX PANEL — Access Console</h1>
+      <div class="subtitle">Multi-server features · modular UI · secure access gate</div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="form-row">
+        <div style="flex:1">
+          <label class="block">Target Username / ID</label>
+          <input id="target" type="text" placeholder="Enter target username or device id" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="flex:1">
+          <label class="block">Select Server</label>
+          <select id="server">
+            <option>Auto (Recommended)</option>
+            <option>Asia</option>
+            <option>Europe</option>
+            <option>North America</option>
+            <option>South America</option>
+            <option>Africa</option>
+            <option>Australia</option>
+          </select>
+        </div>
+        <div style="width:140px">
+          <label class="block">Platform</label>
+          <select id="platform">
+            <option>Android</option>
+            <option>iOS</option>
+            <option>PC emulator</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:6px">
+        <label class="block">Features</label>
+        <div class="toggles">
+          <div class="toggle"><div class="tname">Auto Headshot</div><div class="switch" data-key="headshot" title="Toggle feature"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">Aim Assist</div><div class="switch" data-key="aim"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">Unlimited Diamonds</div><div class="switch" data-key="diamonds"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">Rapid Fire</div><div class="switch" data-key="rapid"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">Wallhack</div><div class="switch" data-key="wall"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">No Recoil</div><div class="switch" data-key="recoil"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">Anti-Ban</div><div class="switch" data-key="antiban"><div class="knob"></div></div></div>
+          <div class="toggle"><div class="tname">ESP Info</div><div class="switch" data-key="esp"><div class="knob"></div></div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label class="block">Extra Switches</label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+          <div class="chip">Auto Loot</div>
+          <div class="chip">Speed Boost</div>
+          <div class="chip">Silent Mode</div>
+          <div class="chip">Teleport</div>
+          <div class="chip">Invisible</div>
+          <div class="chip">Skin Unlock</div>
+          <div class="chip">Friend Radar</div>
+          <div class="chip">Fake Ping</div>
+        </div>
+      </div>
+
+      <div class="controls" style="margin-top:14px">
+        <button id="injectBtn" class="btn primary">RUN</button>
+        <button id="resetBtn" class="btn ghost small">Reset</button>
+        <button id="screenshotBtn" class="btn small" title="Snapshot">Snapshot</button>
+      </div>
+
+      <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+        <div class="fake-badge">Version H54XX-2.3</div>
+        <div class="fake-badge">Build: red-terminal</div>
+        <div style="flex:1;text-align:right;color:var(--muted)"><span id="statusLite">Idle</span></div>
+      </div>
+    </div>
+
+    <div class="right-panel panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></div>
+          <div style="font-size:13px">Console</div>
+          <div class="chip" id="consoleMode">Mode: SECURE</div>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">H54XX · access console</div>
+      </div>
+
+      <div id="log" class="log" aria-live="polite">
+        <div><span class="blink">»</span> System ready. Awaiting command...</div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="pbar"><i id="progressBar"></i></div>
+        <div class="status"><div id="progressText">0%</div><div id="progressExtra">—</div></div>
+      </div>
+
+      <footer>
+        <div>Powered by H54XX</div>
+        <div style="display:flex;gap:8px;align-items:center"><div class="hint">Tip: click the H54XX logo 5×</div></div>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- Login overlay -->
+<div id="overlay" class="overlay" role="dialog" aria-modal="true">
+  <div class="login-card" role="document">
+    <h2>Access Gate</h2>
+    <p>Enter password to access the H54XX console.</p>
+    <div class="row">
+      <input id="pwInput" type="password" placeholder="Password" autocomplete="off">
+      <button id="pwBtn" class="btn primary">Unlock</button>
+    </div>
+    <div class="warning">If you don't have access, click <a id="getAccessLink" href="https://t.me/infolord666" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:none;font-weight:700">Get Access</a>.</div>
+    <div class="access-row">
+      <div style="color:var(--muted);font-size:12px">Direct contact:</div>
+      <a class="btn ghost get-access" href="https://t.me/infolord666" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:var(--muted);border-radius:8px;padding:8px 10px">Get Access</a>
+    </div>
+  </div>
+</div>
+
+<script>
+/* H54XX PANEL — UI only.
+   No external automation or exploit code.
+   Password (as requested): infolord666
+*/
+
+const PASSWORD = 'infolord666';
+
+const overlay = document.getElementById('overlay');
+const pwInput = document.getElementById('pwInput');
+const pwBtn = document.getElementById('pwBtn');
+const logEl = document.getElementById('log');
+const progressBar = document.getElementById('progressBar');
+const progressText = document.getElementById('progressText');
+const progressExtra = document.getElementById('progressExtra');
+const statusLite = document.getElementById('statusLite');
+const injectBtn = document.getElementById('injectBtn');
+const resetBtn = document.getElementById('resetBtn');
+const snapshotBtn = document.getElementById('screenshotBtn');
+const logo = document.getElementById('logo');
+
+const switches = document.querySelectorAll('.switch');
+
+function log(msg, cls=''){
+  const d = document.createElement('div');
+  d.innerHTML = `<span style="color:var(--muted)">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+  if (cls) d.classList.add(cls);
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+/* simple toggle UI */
+switches.forEach(s => {
+  s.addEventListener('click', () => {
+    s.classList.toggle('on');
+    const key = s.dataset.key || 'x';
+    const enabled = s.classList.contains('on');
+    log(`${enabled ? 'ENABLED' : 'DISABLED'} ${key.toUpperCase()}`);
+  });
+});
+
+/* neutralized process sequence (no claims of hacking) */
+const sequence = [
+  {msg:'Initializing modules', time:700},
+  {msg:'Verifying environment', time:900},
+  {msg:'Applying feature pack', time:1200},
+  {msg:'Optimizing payload', time:900},
+  {msg:'Synchronizing settings', time:1000},
+  {msg:'Finalizing', time:700}
+];
+
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+let injecting = false;
+async function runProcess(){
+  if (injecting) return;
+  injecting = true;
+  progressBar.style.width = '0%';
+  progressText.textContent = '0%';
+  progressExtra.textContent = 'Starting...';
+  statusLite.textContent = 'Running';
+  log('Process started.');
+
+  const target = document.getElementById('target').value || 'unknown';
+  log(`Target: ${target}`);
+  log(`Server: ${document.getElementById('server').value} · Platform: ${document.getElementById('platform').value}`);
+
+  let percent = 0;
+  for (let i=0;i<sequence.length;i++){
+    const step = sequence[i];
+    log(step.msg+'...');
+    progressExtra.textContent = step.msg;
+    const incr = Math.floor( (100 - percent) * (Math.random()*0.22 + 0.12) );
+    const targetPercent = Math.min(100, percent + incr);
+    const frames = 20;
+    for (let f=0; f<=frames; f++){
+      const current = percent + (targetPercent - percent)*(f/frames);
+      progressBar.style.width = current + '%';
+      progressText.textContent = Math.floor(current) + '%';
+      await sleep(Math.floor(step.time/frames));
+    }
+    percent = targetPercent;
+    log(`-> ${step.msg} [OK]`);
+    await sleep(200 + Math.random()*300);
+  }
+
+  progressExtra.textContent = 'Wrapping up';
+  for (let i=percent; i<=99; i++){
+    progressBar.style.width = i + '%';
+    progressText.textContent = i + '%';
+    await sleep(18);
+  }
+
+  progressBar.style.width = '100%';
+  progressText.textContent = '100%';
+  progressExtra.textContent = 'Completed';
+  log('Process completed successfully.');
+  await sleep(300);
+  const enabled = Array.from(switches).filter(s=>s.classList.contains('on')).map(s=>s.dataset.key).join(', ') || 'none';
+  log(`Features active: ${enabled}`);
+  statusLite.textContent = 'Idle';
+  injecting = false;
+
+  // show CTA after process: Get Access -> t.me/infolord666
+  showAccessButton();
+}
+
+function showAccessButton(){
+  // If already present, do nothing
+  if (document.getElementById('accessBtn')) return;
+  const actionsPanel = document.querySelector('.panel');
+  const btn = document.createElement('a');
+  btn.id = 'accessBtn';
+  btn.className = 'btn primary';
+  btn.textContent = 'Get Access';
+  btn.href = 'https://t.me/infolord666';
+  btn.target = '_blank';
+  btn.style.display = 'inline-block';
+  btn.style.marginTop = '12px';
+  actionsPanel.appendChild(btn);
+}
+
+/* Login behavior */
+pwBtn.addEventListener('click', attemptLogin);
+pwInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') attemptLogin();
+});
+
+function attemptLogin(){
+  const val = pwInput.value || '';
+  if (val === PASSWORD){
+    overlay.style.display = 'none';
+    log('Access granted. Welcome.');
+    pwInput.value = '';
+    // focus primary interactable
+    document.getElementById('target').focus();
+  } else {
+    // subtle shake + feedback
+    log('Access attempt failed.');
+    pwInput.value = '';
+    pwInput.focus();
+    flashOverlay();
+  }
+}
+
+function flashOverlay(){
+  const card = document.querySelector('.login-card');
+  card.animate([
+    { transform: 'translateX(0)' },
+    { transform: 'translateX(-8px)' },
+    { transform: 'translateX(8px)' },
+    { transform: 'translateX(0)' }
+  ], { duration: 260, iterations: 1 });
+}
+
+/* Primary controls */
+injectBtn.addEventListener('click', () => {
+  if (document.getElementById('target').value.trim() === '') {
+    if (!confirm('No target specified. Continue with a generic target?')) return;
+  }
+  runProcess();
+});
+
+resetBtn.addEventListener('click', () => {
+  switches.forEach(s=>s.classList.remove('on'));
+  progressBar.style.width='0%';
+  progressText.textContent='0%';
+  progressExtra.textContent='—';
+  log('UI reset to idle.');
+  statusLite.textContent='Idle';
+});
+
+snapshotBtn.addEventListener('click', () => {
+  log('Local snapshot captured.');
+  alert('Snapshot saved (local only).');
+});
+
+/* Logo easter: click 5x to reveal access button */
+let logoClicks = 0;
+logo.addEventListener('click', () => {
+  logoClicks++;
+  if (logoClicks >= 5){
+    logoClicks = 0;
+    showAccessButton();
+    log('Quick access revealed.');
+  }
+});
+
+/* keyboard shortcut to reveal CTA: Ctrl/Cmd + A */
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='a') {
+    showAccessButton();
+    log('Quick access (keyboard) revealed.');
+  }
+});
+
+/* initial startup lines */
+(async function init(){
+  await sleep(250);
+  log('Initializing H54XX runtime...');
+  await sleep(400);
+  log('Loading UI modules...');
+  await sleep(300);
+  log('Ready.');
+})();
+</script>
+</body>
+</html>
